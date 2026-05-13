@@ -19,7 +19,9 @@
     "tailwind-merge": "^2.2.1",
     "lucide-react": "^0.320.0",
     "@radix-ui/react-tabs": "^1.0.0",
-    "@radix-ui/react-dialog": "^1.0.0"
+    "@radix-ui/react-dialog": "^1.0.0",
+    "resend": "^3.0.0",
+    "axios": "^1.6.0"
   },
   "devDependencies": {
     "typescript": "^5.4.0",

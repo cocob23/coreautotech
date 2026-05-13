@@ -1,12 +1,18 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../components/ui/Tabs'
 import { Input } from '../components/ui/Input'
 import { Textarea } from '../components/ui/Textarea'
+import { Dialog, DialogContent, DialogFooter, DialogHeader } from '../components/ui/Dialog'
+import { Boxes, Tags, ReceiptText, Truck } from 'lucide-react'
 // removed Textarea usage for image URLs
 import { Button } from '../components/ui/Button'
-import { addProduct, deleteProduct, getCategories, getOrders, getProducts, updateOrderStatus, updateProduct, addProductImage, deleteProductImage, addCategory, deleteCategory, updateCategory, reorderProductImages } from '../lib/api'
+import PaymentProofsAdmin from '../components/SalesProofsAdmin'
+import ShipmentsAdmin from '../components/ShipmentsAdmin'
+import { addProduct, deleteProduct, getCategories, getProducts, updateProduct, addProductImage, deleteProductImage, addCategory, deleteCategory, updateCategory, reorderProductImages } from '../lib/api'
 import { uploadProductImageFile } from '../lib/storage'
 import { slugify } from '../utils/slugify'
+import { Price } from '../components/ui/Price'
+import type { Category, Product } from '../lib/types'
 
 function useAdminAuth() {
   const [ok, setOk] = useState(false)
@@ -26,12 +32,12 @@ export default function Admin() {
 
   if (!auth.ok) {
     return (
-      <div className="container py-12 max-w-md">
+      <div className="container max-w-md py-8 sm:py-12">
         <h1 className="text-2xl font-bold">Admin</h1>
         <p className="mt-2 text-sm text-neutral-400">Ingresa la clave de administrador para continuar.</p>
-        <div className="mt-4 flex gap-2">
+        <div className="mt-4 flex flex-col gap-2 sm:flex-row">
           <Input type="password" placeholder="ADMIN_KEY" value={loginKey} onChange={(e) => setLoginKey(e.target.value)} />
-          <Button onClick={() => auth.login(loginKey)}>Entrar</Button>
+          <Button className="w-full sm:w-auto" onClick={() => auth.login(loginKey)}>Entrar</Button>
         </div>
       </div>
     )
@@ -39,28 +45,74 @@ export default function Admin() {
 
   return (
     <div className="container py-8">
-      <div className="mb-4 flex items-center justify-between">
+      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-2xl font-bold">Panel Admin</h1>
-        <Button variant="secondary" onClick={() => auth.logout()}>Salir</Button>
+        <Button className="w-full sm:w-auto" variant="secondary" onClick={() => auth.logout()}>Salir</Button>
       </div>
-      <Tabs defaultValue="products">
-        <TabsList>
-          <TabsTrigger value="products">Productos</TabsTrigger>
-          <TabsTrigger value="categories">Categorías</TabsTrigger>
-          <TabsTrigger value="orders">Órdenes</TabsTrigger>
-          <TabsTrigger value="settings">Ajustes</TabsTrigger>
+      <p className="mb-4 text-sm text-neutral-400">
+        Gestiona el catálogo, valida comprobantes y administra envíos/retiros desde secciones separadas.
+      </p>
+
+      <Tabs defaultValue="catalogo">
+        <TabsList className="grid w-full grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-0">
+          <TabsTrigger value="catalogo">Catálogo</TabsTrigger>
+          <TabsTrigger value="ventas">Ventas</TabsTrigger>
+          <TabsTrigger value="logistica">Logística</TabsTrigger>
         </TabsList>
-        <TabsContent value="products">
-          <ProductsAdmin />
+
+        <TabsContent value="catalogo" className="mt-4">
+          <div className="mb-4 grid gap-3 md:grid-cols-2">
+            <div className="rounded-lg border border-border bg-neutral-900 p-4">
+              <div className="mb-2 flex items-center gap-2 text-neutral-200">
+                <Boxes className="h-4 w-4" />
+                <span className="font-semibold">Productos</span>
+              </div>
+              <p className="text-sm text-neutral-400">Alta, edición, stock e imágenes.</p>
+            </div>
+            <div className="rounded-lg border border-border bg-neutral-900 p-4">
+              <div className="mb-2 flex items-center gap-2 text-neutral-200">
+                <Tags className="h-4 w-4" />
+                <span className="font-semibold">Categorías</span>
+              </div>
+              <p className="text-sm text-neutral-400">Organización del catálogo por rubro.</p>
+            </div>
+          </div>
+
+          <Tabs defaultValue="products">
+            <TabsList className="grid w-full grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-0 md:w-[420px]">
+              <TabsTrigger value="products">Productos</TabsTrigger>
+              <TabsTrigger value="categories">Categorías</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="products">
+              <ProductsAdmin />
+            </TabsContent>
+            <TabsContent value="categories">
+              <CategoriesAdmin />
+            </TabsContent>
+          </Tabs>
         </TabsContent>
-        <TabsContent value="categories">
-          <CategoriesAdmin />
+
+        <TabsContent value="ventas" className="mt-4">
+          <div className="mb-4 rounded-lg border border-border bg-neutral-900 p-4">
+            <div className="mb-2 flex items-center gap-2 text-neutral-200">
+              <ReceiptText className="h-4 w-4" />
+              <span className="font-semibold">Validación de pagos</span>
+            </div>
+            <p className="text-sm text-neutral-400">Revisa comprobantes y aprueba/rechaza pagos.</p>
+          </div>
+          <PaymentProofsAdmin />
         </TabsContent>
-        <TabsContent value="orders">
-          <OrdersAdmin />
-        </TabsContent>
-        <TabsContent value="settings">
-          <SettingsAdmin />
+
+        <TabsContent value="logistica" className="mt-4">
+          <div className="mb-4 rounded-lg border border-border bg-neutral-900 p-4">
+            <div className="mb-2 flex items-center gap-2 text-neutral-200">
+              <Truck className="h-4 w-4" />
+              <span className="font-semibold">Envíos y retiros</span>
+            </div>
+            <p className="text-sm text-neutral-400">Carga tracking y marca productos listos para retirar.</p>
+          </div>
+          <ShipmentsAdmin />
         </TabsContent>
       </Tabs>
     </div>
@@ -68,8 +120,8 @@ export default function Admin() {
 }
 
 function ProductsAdmin() {
-  const [categories, setCategories] = useState<any[]>([])
-  const [products, setProducts] = useState<any[]>([])
+  const [categories, setCategories] = useState<Category[]>([])
+  const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState<string>('')
 
@@ -78,8 +130,8 @@ function ProductsAdmin() {
     setLoadError('')
     try {
       const [cats, prods] = await Promise.all([getCategories(), getProducts({})])
-      setCategories(cats)
-      setProducts(prods)
+      setCategories(cats as Category[])
+      setProducts(prods as Product[])
     } catch (e: any) {
       console.error('Error cargando categorías/productos:', e?.message || e)
       setLoadError(e?.message ? String(e.message) : 'No se pudieron cargar categorías/productos. Verificá conexión y políticas RLS (SELECT).')
@@ -95,6 +147,15 @@ function ProductsAdmin() {
   const [createFiles, setCreateFiles] = useState<File[]>([])
   const [createdOk, setCreatedOk] = useState(false)
   const [errorMsg, setErrorMsg] = useState<string>('')
+  const [productEditor, setProductEditor] = useState<{
+    id: number
+    name: string
+    price_list: string
+    price_cash: string
+  } | null>(null)
+  const [savingProductEditor, setSavingProductEditor] = useState(false)
+  const [descriptionEditor, setDescriptionEditor] = useState<{ id: number; name: string; value: string } | null>(null)
+  const [savingDescription, setSavingDescription] = useState(false)
   const removeCreateFile = (idx: number) => {
     setCreateFiles((prev) => prev.filter((_, i) => i !== idx))
   }
@@ -242,36 +303,31 @@ function ProductsAdmin() {
                   <div className="font-semibold">{p.name}</div>
                   <div className="text-right text-sm text-neutral-300">
                     {p.price_cash != null && (
-                      <div><span className="text-neutral-500">Efectivo:</span> ${p.price_cash.toFixed(2)}</div>
+                      <div className="flex flex-wrap items-baseline gap-1"><span className="text-neutral-500">Efectivo:</span> <Price amount={p.price_cash} className="font-semibold text-neutral-100" integerClassName="text-sm" centsClassName="text-[0.55em]" /></div>
                     )}
                     {p.price_list != null && (
-                      <div className="text-neutral-400"><span className="text-neutral-500">Lista:</span> ${p.price_list.toFixed(2)}</div>
+                      <div className="flex flex-wrap items-baseline gap-1 text-neutral-400"><span className="text-neutral-500">Lista:</span> <Price amount={p.price_list} className="text-neutral-400" integerClassName="text-sm" centsClassName="text-[0.55em]" /></div>
                     )}
                     {p.price_cash == null && p.price_list == null && (
-                      <div>${p.price.toFixed(2)}</div>
+                      <div><Price amount={p.price} className="font-semibold text-neutral-100" integerClassName="text-sm" centsClassName="text-[0.55em]" /></div>
                     )}
                     <div className="text-neutral-500">stock {p.stock}</div>
                   </div>
                 </div>
-                <div className="mt-2 text-sm text-neutral-400">{p.description}</div>
+                <div className="mt-2 whitespace-pre-line text-sm text-neutral-400">{p.description}</div>
                 <div className="mt-3 flex items-center gap-2">
                   <Button variant="secondary" onClick={() => update(p.id, { stock: p.stock + 1 })}>+1 stock</Button>
                   <Button variant="secondary" onClick={() => update(p.id, { stock: Math.max(0, p.stock - 1) })}>-1 stock</Button>
                   <Button variant="secondary" onClick={() => {
-                    const val = prompt('Nuevo precio de lista', p.price_list != null ? String(p.price_list) : '')
-                    if (val !== null) update(p.id, { price_list: val ? Number(val) : null })
-                  }}>Editar lista</Button>
+                    setProductEditor({
+                      id: p.id,
+                      name: p.name || '',
+                      price_list: p.price_list != null ? String(p.price_list) : '',
+                      price_cash: p.price_cash != null ? String(p.price_cash) : '',
+                    })
+                  }}>Editar nombre y precios</Button>
                   <Button variant="secondary" onClick={() => {
-                    const val = prompt('Nuevo precio en efectivo', p.price_cash != null ? String(p.price_cash) : '')
-                    if (val !== null) update(p.id, { price_cash: val ? Number(val) : null })
-                  }}>Editar efectivo</Button>
-                  <Button variant="secondary" onClick={() => {
-                    const val = prompt('Nuevo título (nombre del producto)', p.name)
-                    if (val && val.trim()) update(p.id, { name: val.trim() })
-                  }}>Renombrar</Button>
-                  <Button variant="secondary" onClick={() => {
-                    const val = prompt('Nueva descripción', p.description || '')
-                    if (val !== null) update(p.id, { description: val })
+                    setDescriptionEditor({ id: p.id, name: p.name, value: p.description || '' })
                   }}>Editar descripción</Button>
                   <Button variant="outline" onClick={() => del(p.id)}>Eliminar</Button>
                 </div>
@@ -341,55 +397,131 @@ function ProductsAdmin() {
           </div>
         )}
       </div>
-    </div>
-  )
-}
 
-function OrdersAdmin() {
-  const [orders, setOrders] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
-  const reload = () => { setLoading(true); getOrders().then(setOrders).finally(() => setLoading(false)) }
-  useEffect(() => { reload() }, [])
-
-  return (
-    <div className="py-6">
-      <h2 className="text-lg font-semibold">Órdenes</h2>
-      {loading ? (
-        <div className="text-neutral-400">Cargando...</div>
-      ) : (
-        <div className="grid grid-cols-1 gap-3">
-          {orders.map((o) => (
-            <div key={o.id} className="rounded border border-border p-4">
-              <div className="flex items-center justify-between">
-                <div>#{o.id} · producto {o.product_id} · cant {o.quantity}</div>
-                <div className="text-sm text-neutral-400">{o.buyer_name} · {o.buyer_contact}</div>
-              </div>
-              <div className="mt-2 text-sm">{o.notes}</div>
-              <div className="mt-3 flex gap-2">
-                <Button variant="secondary" onClick={() => updateOrderStatus(o.id, 'en_proceso').then(reload)}>En proceso</Button>
-                <Button variant="secondary" onClick={() => updateOrderStatus(o.id, 'cerrado').then(reload)}>Cerrado</Button>
-                <Button variant="outline" onClick={() => updateOrderStatus(o.id, 'cancelado').then(reload)}>Cancelado</Button>
-              </div>
+      <Dialog
+        open={Boolean(productEditor)}
+        onOpenChange={(open) => {
+          if (!open && !savingProductEditor) setProductEditor(null)
+        }}
+      >
+        <DialogContent className="max-w-xl">
+          <DialogHeader>
+            Editar nombre y precios{productEditor?.name ? `: ${productEditor.name}` : ''}
+          </DialogHeader>
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+            <div className="md:col-span-2">
+              <label className="mb-1 block text-sm text-neutral-300">Nombre</label>
+              <Input
+                placeholder="Nombre del producto"
+                value={productEditor?.name || ''}
+                onChange={(e) => setProductEditor((prev) => (prev ? { ...prev, name: e.target.value } : prev))}
+              />
             </div>
-          ))}
-        </div>
-      )}
-    </div>
-  )
-}
+            <div>
+              <label className="mb-1 block text-sm text-neutral-300">Precio de lista</label>
+              <Input
+                type="number"
+                inputMode="decimal"
+                placeholder="Vacío = sin precio de lista"
+                value={productEditor?.price_list || ''}
+                onChange={(e) => setProductEditor((prev) => (prev ? { ...prev, price_list: e.target.value } : prev))}
+              />
+            </div>
+            <div>
+              <label className="mb-1 block text-sm text-neutral-300">Precio en efectivo</label>
+              <Input
+                type="number"
+                inputMode="decimal"
+                placeholder="Vacío = sin precio en efectivo"
+                value={productEditor?.price_cash || ''}
+                onChange={(e) => setProductEditor((prev) => (prev ? { ...prev, price_cash: e.target.value } : prev))}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" disabled={savingProductEditor} onClick={() => setProductEditor(null)}>Cancelar</Button>
+            <Button
+              disabled={!productEditor || savingProductEditor}
+              onClick={async () => {
+                if (!productEditor) return
+                if (!productEditor.name.trim()) {
+                  setErrorMsg('El nombre del producto no puede estar vacío.')
+                  return
+                }
+                const listRaw = productEditor.price_list.trim()
+                const cashRaw = productEditor.price_cash.trim()
+                const parsedList = listRaw === '' ? null : Number(listRaw)
+                const parsedCash = cashRaw === '' ? null : Number(cashRaw)
+                if ((parsedList !== null && Number.isNaN(parsedList)) || (parsedCash !== null && Number.isNaN(parsedCash))) {
+                  setErrorMsg('Revisá los precios: deben ser números válidos.')
+                  return
+                }
+                try {
+                  setSavingProductEditor(true)
+                  setErrorMsg('')
+                  await update(productEditor.id, {
+                    name: productEditor.name.trim(),
+                    price_list: parsedList,
+                    price_cash: parsedCash,
+                  })
+                  setProductEditor(null)
+                } finally {
+                  setSavingProductEditor(false)
+                }
+              }}
+            >
+              {savingProductEditor ? 'Guardando...' : 'Guardar cambios'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
-function SettingsAdmin() {
-  const [brand, setBrand] = useState(localStorage.getItem('brand') || '')
-  useEffect(() => { if (brand) { document.documentElement.style.setProperty('--brand', brand); localStorage.setItem('brand', brand) } }, [brand])
-  return (
-    <div className="py-6">
-      <h2 className="text-lg font-semibold">Ajustes de marca</h2>
-      <p className="mt-1 text-sm text-neutral-400">Configura el color principal (HSL, ejemplo: 0 100% 50%).</p>
-      <div className="mt-3 flex gap-2">
-        <Input placeholder="0 100% 50%" value={brand} onChange={(e) => setBrand(e.target.value)} />
-        <Button onClick={() => setBrand(brand)}>Aplicar</Button>
-      </div>
-      <p className="mt-4 text-sm text-neutral-400">Para el logo, coloca el archivo en public/logo.png (copiar desde la raíz del workspace).</p>
+      <Dialog
+        open={Boolean(descriptionEditor)}
+        onOpenChange={(open) => {
+          if (!open && !savingDescription) setDescriptionEditor(null)
+        }}
+      >
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            Editar descripción{descriptionEditor?.name ? `: ${descriptionEditor.name}` : ''}
+          </DialogHeader>
+          <div className="space-y-2">
+            <label className="text-sm text-neutral-300">Descripción</label>
+            <Textarea
+              rows={12}
+              placeholder="Escribí una descripción con saltos de línea..."
+              value={descriptionEditor?.value || ''}
+              onChange={(e) => setDescriptionEditor((prev) => (prev ? { ...prev, value: e.target.value } : prev))}
+            />
+            <p className="text-xs text-neutral-500">Podés usar Enter para separar párrafos o listas.</p>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="ghost"
+              disabled={savingDescription}
+              onClick={() => setDescriptionEditor(null)}
+            >
+              Cancelar
+            </Button>
+            <Button
+              disabled={!descriptionEditor || savingDescription}
+              onClick={async () => {
+                if (!descriptionEditor) return
+                try {
+                  setSavingDescription(true)
+                  await update(descriptionEditor.id, { description: descriptionEditor.value })
+                  setDescriptionEditor(null)
+                } finally {
+                  setSavingDescription(false)
+                }
+              }}
+            >
+              {savingDescription ? 'Guardando...' : 'Guardar descripción'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

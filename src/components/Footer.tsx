@@ -6,11 +6,11 @@ export default function Footer() {
           <p>
             © {new Date().getFullYear()} Coreautotech — Repuestos y accesorios tuning.
           </p>
-          <p className="flex gap-4">
+          <p className="flex flex-wrap gap-x-4 gap-y-2">
             <a href="https://www.instagram.com/coreautotech.arg/" target="_blank" rel="noreferrer" className="hover:text-brand">Instagram</a>
             <a href="https://www.facebook.com/coreautotech.arg" target="_blank" rel="noreferrer" className="hover:text-brand">Facebook</a>
-            <a href="https://wa.me/541126048550" target="_blank" rel="noreferrer" className="hover:text-brand">WhatsApp 1126048550</a>
-            <a href="https://wa.me/541126048606" target="_blank" rel="noreferrer" className="hover:text-brand">WhatsApp 1126048606</a>
+            <a href="https://wa.me/5491122612859" target="_blank" rel="noreferrer" className="hover:text-brand">WhatsApp +54 9 11 2261-2859</a>
+            <a href="https://wa.me/5491171405601" target="_blank" rel="noreferrer" className="hover:text-brand">WhatsApp +54 9 11 7140-5601</a>
           </p>
         </div>
       </div>

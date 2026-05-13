@@ -1,0 +1,8 @@
+# robots.txt for CoreAutoTech
+# Allow all robots
+User-agent: *
+Allow: /
+
+# Sitemap y host configurados para tu dominio
+Sitemap: https://coreautotech.ar/sitemap.xml
+Host: coreautotech.ar

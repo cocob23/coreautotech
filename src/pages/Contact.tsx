@@ -1,6 +1,6 @@
 export default function Contact() {
-  const phonePrimary = '541126048550'
-  const phoneSecondary = '541126048606'
+  const phonePrimary = '5491122612859'
+  const phoneSecondary = '5491171405601'
   const waText = encodeURIComponent('Hola! Me gustaría hacer una consulta sobre productos.')
 
   return (
@@ -22,29 +22,29 @@ export default function Contact() {
             </div>
           </div>
           <div className="mt-4 space-y-2 text-sm text-neutral-300">
-            <div>+54 11 2604-8550</div>
-            <div>+54 11 2604-8606</div>
+            <div>+54 9 11 2261-2859</div>
+            <div>+54 9 11 7140-5601</div>
           </div>
           <div className="mt-5 flex flex-wrap gap-3">
             <a
               href={`https://wa.me/${phonePrimary}?text=${waText}`}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center justify-center rounded-md bg-brand px-4 py-2 text-sm font-medium text-black hover:opacity-90"
-              aria-label="Enviar mensaje por WhatsApp al 8550"
-              title="Enviar por WhatsApp al +54 11 2604-8550"
+              className="inline-flex w-full items-center justify-center rounded-md bg-brand px-4 py-2 text-sm font-medium text-black hover:opacity-90 sm:w-auto"
+              aria-label="Enviar mensaje por WhatsApp al 2261-2859"
+              title="Enviar por WhatsApp al +54 9 11 2261-2859"
             >
-              Enviar al +54 11 2604-8550
+              Enviar al +54 9 11 2261-2859
             </a>
             <a
               href={`https://wa.me/${phoneSecondary}?text=${waText}`}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center justify-center rounded-md bg-brand px-4 py-2 text-sm font-medium text-black hover:opacity-90"
-              aria-label="Enviar mensaje por WhatsApp al 8606"
-              title="Enviar por WhatsApp al +54 11 2604-8606"
+              className="inline-flex w-full items-center justify-center rounded-md bg-brand px-4 py-2 text-sm font-medium text-black hover:opacity-90 sm:w-auto"
+              aria-label="Enviar mensaje por WhatsApp al 7140-5601"
+              title="Enviar por WhatsApp al +54 9 11 7140-5601"
             >
-              Enviar al +54 11 2604-8606
+              Enviar al +54 9 11 7140-5601
             </a>
           </div>
         </div>
@@ -67,7 +67,7 @@ export default function Contact() {
               href="https://www.instagram.com/coreautotech.arg/"
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center justify-center rounded-md bg-brand px-4 py-2 text-sm font-medium text-black hover:opacity-90"
+              className="inline-flex w-full items-center justify-center rounded-md bg-brand px-4 py-2 text-sm font-medium text-black hover:opacity-90 sm:w-auto"
               aria-label="Abrir Instagram"
             >
               Abrir Instagram
@@ -93,7 +93,7 @@ export default function Contact() {
               href="https://www.facebook.com/coreautotech.arg"
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center justify-center rounded-md bg-brand px-4 py-2 text-sm font-medium text-black hover:opacity-90"
+              className="inline-flex w-full items-center justify-center rounded-md bg-brand px-4 py-2 text-sm font-medium text-black hover:opacity-90 sm:w-auto"
               aria-label="Abrir Facebook"
             >
               Abrir Facebook
